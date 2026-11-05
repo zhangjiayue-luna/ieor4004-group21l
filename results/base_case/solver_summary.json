@@ -1,0 +1,34 @@
+{
+  "status": "FEASIBLE_INCUMBENT_NOT_PROVEN_OPTIMAL",
+  "gurobi_status_code": 9,
+  "objective_weighted_loss": 1229.3057782475528,
+  "best_bound": 1212.6948531121934,
+  "mip_gap": 0.013512443713588665,
+  "configured_mip_gap": 0.001,
+  "runtime_seconds": 300.16221499443054,
+  "variables": 18966,
+  "binary_variables": 3741,
+  "constraints": 26260,
+  "gurobi_version": [
+    13,
+    0,
+    3
+  ],
+  "checks": {
+    "max_constraint_violation": 3.3928415632544784e-13,
+    "max_bound_violation": 0.0,
+    "max_integrality_violation": 0.0,
+    "max_independent_inventory_error": 3.3928415632544784e-13,
+    "max_capacity_violation": 2.0605739337042905e-13,
+    "max_supply_violation": 0.0,
+    "max_assortment_violation": 0,
+    "max_delivery_selection_violation": 0,
+    "objective_reconciliation_error": 0.0
+  },
+  "selected_products_by_store": {
+    "18": 20,
+    "145": 20,
+    "235": 20
+  },
+  "input_source": "forecast_team_csv"
+}

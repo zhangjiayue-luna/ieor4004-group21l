@@ -1,0 +1,29 @@
+{
+  "model": {
+    "K": 20,
+    "capacity_by_store": {
+      "18": 51.25,
+      "145": 46.93,
+      "235": 46.41
+    },
+    "regional_supply": 144.43,
+    "capacity_scale": 1.0,
+    "supply_scale": 1.0,
+    "alpha": 5.0,
+    "beta": 1.0,
+    "h": 0.2,
+    "tau": 0.5,
+    "probabilities": null
+  },
+  "scenario_weights": {
+    "low": 0.3,
+    "typical": 0.4,
+    "high": 0.3
+  },
+  "solver": {
+    "TimeLimit": 300,
+    "MIPGap": 0.001,
+    "Seed": 21,
+    "Threads": 4
+  }
+}
