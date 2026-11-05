@@ -127,6 +127,7 @@ def build_model(data, par, env):
     k3, k4 = list(product(S, P, T)), list(product(S, P, T, Omega))
     d, C, Q, B, cfg = data["d"], par["C"], par["Q"], par["B"], par["cfg"]
     m = gp.Model("Group21L_Milestone4", env=env)
+    # (11) Variable domains: binary selections and branches, nonnegative continuous flows.
     v = {"z": m.addVars(S, P, vtype=GRB.BINARY, name="z"),
          "q": m.addVars(k3, lb=0, ub=Q, name="q")}
     for name in STATES:
@@ -137,37 +138,37 @@ def build_model(data, par, env):
     v["bO"] = m.addVars(k4, vtype=GRB.BINARY, name="bO")
     z, q = v["z"], v["q"]
     O, V, A, Sold, Snew, L, W, U = (v[n] for n in STATES)
-    # (5) Weekly assortment and delivery eligibility.
+    # (2) Weekly assortment and delivery eligibility.
     m.addConstrs((gp.quicksum(z[s, p] for p in P) <= par["K"][s] for s in S), "assortment")
     m.addConstrs((q[k] <= Q[k] * z[k[0], k[1]] for k in k3), "delivery_selection")
-    # (6) Initial old stock = 0; new stock carries for one night only.
+    # (3) Initial old stock = 0; new stock carries for one night only.
     for s, p, t, w in k4:
         m.addConstr(O[s, p, t, w] == (0 if t == T[0] else L[s, p, t-1, w]),
                     name=f"old_stock[{s},{p},{t},{w}]")
-    # (7) Inventory before sales.
+    # (4) Inventory before sales.
     m.addConstrs((V[k] == O[k] + q[k[:3]] for k in k4), "inventory_balance")
-    # (8) Capacity includes old stock and new delivery under every scenario.
+    # (5) Capacity includes old stock and new delivery under every scenario.
     m.addConstrs((gp.quicksum(V[s, p, t, w] for p in P) <= C[s, t]
                   for s in S for t in T for w in Omega), "store_capacity")
-    # (9) Shared regional limit on new deliveries.
+    # (6) Shared regional limit on new deliveries.
     m.addConstrs((gp.quicksum(q[s, p, t] for s in S for p in P) <= par["R"][t] for t in T), "regional_supply")
-    # (10) Exact total sales A = min(V, d).
+    # (7) Exact total sales A = min(V, d).
     m.addConstrs((A[k] <= V[k] for k in k4), "sales_inventory")
     m.addConstrs((A[k] <= d[k] for k in k4), "sales_demand")
     m.addConstrs((A[k] >= V[k] - B[k] * v["bA"][k] for k in k4), "sales_branch1")
     m.addConstrs((A[k] >= d[k] - B[k] * (1-v["bA"][k]) for k in k4), "sales_branch2")
-    # (11) Exact old-stock sales Sold = min(O, d), enforcing FIFO.
+    # (8) Exact old-stock sales Sold = min(O, d), enforcing FIFO.
     m.addConstrs((Sold[k] <= O[k] for k in k4), "old_sales_inventory")
     m.addConstrs((Sold[k] <= d[k] for k in k4), "old_sales_demand")
     m.addConstrs((Sold[k] >= O[k] - B[k] * v["bO"][k] for k in k4), "old_sales_branch1")
     m.addConstrs((Sold[k] >= d[k] - B[k] * (1-v["bO"][k]) for k in k4), "old_sales_branch2")
-    # (12) New-stock sales and carryover.
+    # (9) New-stock sales and carryover.
     m.addConstrs((Snew[k] == A[k]-Sold[k] for k in k4), "new_sales")
     m.addConstrs((L[k] == q[k[:3]]-Snew[k] for k in k4), "new_left")
-    # (13) Old-stock expiration and unmet demand, including unselected products.
+    # (10) Old-stock expiration and unmet demand, including unselected products.
     m.addConstrs((W[k] == O[k]-Sold[k] for k in k4), "expired_old")
     m.addConstrs((U[k] == d[k]-A[k] for k in k4), "unmet")
-    # (4) Day-7 remaining new stock is charged tau, not h or expired waste.
+    # (1) Day-7 remaining new stock is charged tau, not h or expired waste.
     objective = gp.quicksum(par["pi"][w] * (
         gp.quicksum(cfg["alpha"] * U[s,p,t,w] + cfg["beta"] * W[s,p,t,w] for s,p,t in k3)
         + cfg["h"] * gp.quicksum(L[s,p,t,w] for s in S for p in P for t in T[:-1])
