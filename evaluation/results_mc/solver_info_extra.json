@@ -1,0 +1,30 @@
+{
+  "M-mc": {
+    "status": "Time limit reached",
+    "objective": 1091.4652189182934,
+    "bound": 1056.9118260918422,
+    "gap": 0.03165780478162715,
+    "vars": 18966,
+    "rows": 26260
+  },
+  "M-saa10": {
+    "status": "Time limit reached",
+    "objective": 5532.82615,
+    "bound": 1454.6469555898857,
+    "gap": 0.7370878975494494,
+    "vars": 61596,
+    "rows": 86089,
+    "planning_paths": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ]
+  }
+}

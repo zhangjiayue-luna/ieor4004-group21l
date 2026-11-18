@@ -1,0 +1,181 @@
+% OWNER: Arthur (Hang Seo Cho). Section draft for Milestone 5.
+% Requires \usepackage{booktabs,graphicx}. Figure file: fig_loss_2x2.pdf
+\section{Baseline comparison and out-of-sample evaluation}
+
+\paragraph{Policies.}
+We compare the Milestone~4 optimization model with a rule-based baseline that a
+planner could apply without optimization. Using only data through June~25, the
+baseline lets each store carry the $K_s=20$ products with the highest total input
+demand over May~29--June~25 and orders each carried product's point forecast
+$\bar d_{spt}$ (Section~2.3), with no adjustment for stock carried over from the
+previous day. Days whose regional total exceeds $R_t$ are scaled down
+proportionally; then, day by day, each store's quantities are scaled down until
+total presale stock fits $C_{st}$ in every planning scenario. Both policies
+therefore satisfy the same assortment, supply, and capacity constraints. To
+separate the value of demand recovery from the value of optimization, each policy
+is built twice: from raw observed sales and from stockout-adjusted demand. Both
+inputs pass through the same forecast rule and scenario multipliers
+$\kappa_\omega$.
+
+\paragraph{Common evaluation.}
+Every plan is scored by one simulator that applies the model's inventory rules
+with the plan held fixed: zero initial stock, two-day sellable life, FIFO issuing,
+sales $=\min\{\text{stock},\text{demand}\}$, and lost unmet demand. Applied to the
+Milestone~4 Gurobi plan, the simulator reproduces every inventory variable and the
+objective value (1{,}229.31) to within $10^{-12}$. All plans are scored with the
+base-case weights $(\alpha,\beta,h,\tau)=(5,1,0.2,0.5)$ on three demand paths:
+the three planning scenarios (probability-weighted), the holdout week
+June~26--July~2 with stockout hours recovered from training-period references,
+and the same holdout week with estimated lost demand increased by 25\%. Holdout
+demand totals 1{,}106.8 normalized units (913.2 observed sales), between the low
+(1{,}069.7) and typical (1{,}186.0) scenarios. No holdout information is used to
+build any plan.
+
+\paragraph{Solver note.}
+For a like-for-like comparison, both optimization plans in the $2\times2$ design
+are solved with the same solver and settings (HiGHS~1.16, 900-second limit,
+identical formulation with 18{,}966 variables and 26{,}260 constraints). The
+adjusted-input solve ends with a 2.2\% gap. The raw-input solve ends with an 11\%
+gap, so its results are less precise. The official Milestone~4 Gurobi plan
+(1.35\% gap) is reported alongside and gives nearly identical holdout results.
+
+\begin{table}[h]
+\centering
+\small
+\caption{Holdout-week performance (June 26--July 2). Quantities are normalized
+units; lower loss is better. Unmet demand includes products a store does not carry.}
+\label{tab:holdout}
+\begin{tabular}{llrrrrrr}
+\toprule
+Input & Policy & Fill rate & Unmet & Expired & Carryover & Day-7 stock & Loss $J$\\
+\midrule
+Raw sales & Baseline     & 72.8\% & 301.4 & 10.6 & 107.5 & 33.8 & 1{,}555.8\\
+          & Optimization & 73.6\% & 292.5 & 14.6 & 142.7 & 38.9 & 1{,}525.2\\
+Adjusted  & Baseline     & 78.2\% & 241.6 & 19.8 & 200.8 & 58.2 & 1{,}297.2\\
+          & Optimization & 78.4\% & 238.8 & 25.2 & 191.6 & 61.8 & 1{,}288.4\\
+          & Optimization (Gurobi, M4) & 78.5\% & 238.3 & 26.4 & 197.9 & 63.3 & 1{,}289.1\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{fig_loss_2x2.pdf}
+\caption{Weighted loss of the four policies on the three evaluation paths.}
+\label{fig:loss2x2}
+\end{figure}
+
+\paragraph{Findings.}
+\textbf{(1) Demand recovery matters more than optimization.} With the decision
+rule fixed, switching the input from raw sales to stockout-adjusted demand lowers
+holdout loss by 258.6 for the baseline and 236.8 for the optimization model (about
+16\%), and raises fill rate by about 5 percentage points. Plans built on raw sales
+under-order because observed sales understate demand during stockouts.
+
+\textbf{(2) The optimization advantage shrinks out of sample.} On its own planning
+scenarios, the optimization model beats the adjusted baseline by 3.3\% (Gurobi
+plan: 3.7\%). On the holdout week the gap falls to 0.7\% (8.8 units of loss), and
+under the +25\% recovery adjustment the two are tied (1{,}452.0 vs.\ 1{,}452.5;
+the Gurobi plan is 0.3\% worse than the baseline). The result is also not uniform
+across stores: on the holdout week the baseline has lower loss than the
+optimization model at store~18 (370.4 vs.\ 378.0), while the optimization model is
+better at stores~145 and~235. The in-sample advantage therefore partly reflects
+fitting the three modeled scenarios.
+
+\textbf{(3) Assortment drives much of the unmet demand.} For the adjusted-input
+plans, 131--138 of the roughly 240 unmet units on the holdout week (55--57\%)
+belong to products that a store does not carry under $K_s=20$.
+
+\textbf{(4) The scenarios understate product-level uncertainty.} Each plan
+satisfies store capacity in all three planning scenarios, which have almost no
+carryover (15--33 units). On the holdout week, product-level demand departs from
+the common-multiplier forecast, carryover rises to 190--201 units, and total
+presale stock exceeds store capacity on 16--17 of 21 store-days, by up to about
+19 units. Because all three scenarios scale every product by the same factor, they
+cannot represent one product selling below forecast while another sells above it.
+
+\subsection*{Performance under Monte Carlo demand uncertainty}
+
+The holdout is a single week. To compare the policies over many plausible weeks,
+we score every plan on the Monte Carlo demand paths of Section~\ref{sec:mc}, in which each
+store-product-day varies separately (median coefficient of variation 0.40; across the 2{,}000 paths, weekly
+regional demand averages 1{,}159, with a 5--95\% range of 1{,}029--1{,}298). Ten
+paths are reserved for the diagnostic below, so 1{,}990 paths are used for scoring.
+Because every plan is scored on the same paths, differences are paired path by
+path, and we report 95\% confidence intervals.
+
+\begin{table}[h]
+\centering
+\small
+\caption{Mean performance over 1{,}990 Monte Carlo paths. The last column is the
+paired difference from the baseline built on the same input (95\% CI).}
+\label{tab:mceval}
+\begin{tabular}{llrrrrr}
+\toprule
+Input & Policy & Fill rate & Unmet & Expired & Loss $J$ & vs.\ baseline\\
+\midrule
+Raw sales & Baseline     & 71.7\% & 332.0 & 3.4  & 1{,}690.1 & --\\
+          & Optimization & 72.2\% & 325.2 & 11.6 & 1{,}673.9 & $-16.2$ ($-17.3$, $-15.2$)\\
+Adjusted  & Baseline     & 78.4\% & 253.8 & 5.6  & 1{,}320.5 & --\\
+          & Optimization & 78.4\% & 254.0 & 12.5 & 1{,}331.8 & $+11.4$ ($+10.5$, $+12.2$)\\
+          & Optimization (Gurobi, M4) & 78.4\% & 253.2 & 15.0 & 1{,}330.9 & $+10.4$ ($+9.4$, $+11.3$)\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.72\linewidth]{fig_milp_vs_baseline.pdf}
+\caption{Loss of the optimization plan relative to the rule-based baseline
+(stockout-adjusted input) on each evaluation path. The Monte Carlo bar shows the
+mean paired difference with its 95\% confidence interval.}
+\label{fig:milpvsbase}
+\end{figure}
+
+\textbf{(5) Demand recovery remains the dominant effect.} With the decision rule
+fixed, the adjusted input lowers mean loss by 21.9\% for the baseline and 20.4\%
+for the optimization model, and it lowers loss on every one of the 1{,}990 paths.
+
+\textbf{(6) Under product-level uncertainty, the current optimization model does
+not beat the baseline.} With the adjusted input, the optimization plan's mean loss
+is 0.9\% higher than the baseline's, the baseline has lower loss on 70\% of
+paths, and the confidence interval excludes zero. The two plans serve almost the
+same demand (fill rate 78.4\% for both), but the optimization plan stocks more
+heavily against the three scenarios, so it expires about twice as much stock
+(12.5 vs.\ 5.6 units). Figure~\ref{fig:milpvsbase} shows the trend across
+evaluation paths: the optimization advantage is 3.3\% on its own scenarios, 0.7\%
+on the holdout week, zero under the +25\% test, and negative under Monte Carlo
+uncertainty. With raw-sales input, the optimization plan is 0.9\% better.
+Re-planning both policies on the simulated multipliers of Section~\ref{sec:mc}
+(0.933, 1.020, 1.113) does not change the conclusion: the optimization plan is
+still 0.8\% worse than its baseline, and both plans are worse than those built on
+the original multipliers, because the lower multipliers order less.
+
+\textbf{(7) Capacity is the binding issue.} Every adjusted-input plan exceeds store
+capacity on every path, on 15--16 of 21 store-days on average (14.5 for the
+baseline). As a diagnostic, we
+re-solved the model with Monte Carlo paths 1--10 as ten equally weighted
+scenarios (a small sample-average approximation). Constraint~(5) then requires
+store capacity to hold in every one of ten paths with product-level noise. The
+solver's lower bound shows what that costs: no plan that satisfies capacity in all
+ten paths can have a mean loss below 1{,}454.6 on them, whereas the baseline,
+which ignores capacity on paths it was not planned for, averages 1{,}247.8 on the
+same ten paths. The bound is a proof from the solver, independent of the
+incumbent it found. The best plan found (13.7\% gap after 900 seconds, started
+from the baseline repaired to fit all ten paths) orders only 818 units, and its
+mean loss on the other 1{,}990 paths is 36\% higher than the baseline's. Adding
+product-level scenarios to the current model therefore makes the plan more
+conservative rather than better. This suggests reconsidering how capacity is
+modeled, for example by penalizing overflow or allowing excess stock to be
+discarded, instead of requiring capacity to hold in every scenario.
+
+\paragraph{Limitations.}
+The holdout covers one week, so its differences below about 1\% should not be
+read as meaningful; the Monte Carlo comparison gives the more reliable estimate.
+The Monte Carlo paths and the holdout demand are both built from the same
+stockout-recovery estimates used for planning, which favors the adjusted-input
+plans; the +25\% test shows the ranking is unchanged when more lost demand is
+assumed. Optimization plans were solved with time limits and end with gaps of
+1.4--14\%, so part of the small differences between policies may reflect solver
+precision; the raw-input and ten-path plans in particular should be re-solved
+with Gurobi before final reporting.

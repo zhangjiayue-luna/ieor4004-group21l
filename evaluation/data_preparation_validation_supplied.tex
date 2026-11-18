@@ -1,0 +1,35 @@
+
+\subsection{Holdout Data Preparation and Stockout Recovery}
+
+The holdout period covers June 26--July 2, 2024, with 609 observations across 3 stores and 29 products. The \texttt{sale\_amount} column represents observed sales, while \texttt{demand} represents estimated demand after stockout recovery.
+
+We applied the same Day Type Matching method ($k=15$) used in the training period. Only in-stock observations from March 28 to June 25 were used as historical matching references to avoid data leakage. We verified the sales records and confirmed that the resulting dataset contains no missing values or duplicate records, and that recovered demand is never lower than observed sales.
+
+\subsubsection{+25\% Stockout Recovery Adjustment}
+
+To account for uncertainty in the estimated demand lost during stockouts, we prepared an alternative holdout demand dataset by increasing the estimated lost demand by 25\%, while keeping observed sales unchanged:
+
+\begin{equation}
+D_{\mathrm{adjusted}}
+=Y+1.25(\widehat{D}-Y)
+\end{equation}
+
+where $Y$ is observed sales and $\widehat{D}$ is the original recovered demand.
+
+\begin{table}[htbp]
+\centering
+\caption{Holdout Demand Recovery and +25\% Adjustment}
+\label{tab:recovery_adjustment}
+\begin{tabular}{lrr}
+\hline
+Metric & Original Recovery & +25\% Adjustment \\
+\hline
+Observed sales & 913.17 & 913.17 \\
+Recovered demand & 1,106.75 & 1,155.15 \\
+Estimated lost demand & 193.58 & 241.98 \\
+Increase over observed sales & 21.20\% & 26.50\% \\
+\hline
+\end{tabular}
+\end{table}
+
+Both datasets were provided for subsequent holdout evaluation under different stockout-recovery assumptions.

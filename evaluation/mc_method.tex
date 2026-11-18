@@ -1,0 +1,43 @@
+% Part 1 (Milestone 5): demand uncertainty and Monte Carlo simulation. Numbers from monte_carlo.py (seed 21, 2,000 paths).
+% Needs \usepackage{graphicx} and booktabs in the preamble, and mc_figure.png uploaded next to this file.
+
+\subsection{Demand uncertainty and Monte Carlo simulation}
+The three scenarios of Section 2.3 are a coarse description of uncertainty. We therefore simulate 2{,}000 complete demand paths for June 26--July 2 (609 store--product--day values each) to measure how uncertain the forecast is, to check where the three scenarios sit, and to give the evaluation one common set of demand paths.
+
+\textbf{Method.} We forecast eight past weeks (origins April 30 to June 18) with the rule of Section 2.3 and split each realized-to-forecast ratio into three parts, so that actual $=$ forecast $\times R_{sw}\times D_{stw}\times\rho_{sptw}$: a store-week ratio $R$, a store-day ratio $D$ relative to its week, and a product-day ratio $\rho$ relative to its store-day. The weekly part is modeled as $\log R_{sw}=\mu+f_w+e_{sw}$, where $f_w$ is a week effect shared by the three stores ($\sigma_f=0.055$) and $e_{sw}$ is a store deviation ($\sigma_e=0.051$). With only eight weeks, $\mu=0.018$ is itself drawn from its estimation error (0.022). The store-day and product-day parts are resampled from their observed values, by store and by store--product, after rescaling each pool to mean one so that they add noise without shifting the level. Each path multiplies the final forecast by one draw of each part. Each of the eight forecasts uses only a Section 2.2 recovery built from data through its own origin (one cutoff file per origin), so no look-ahead enters the forecasts; realized demand is the recovered demand from the full period. Using the full recovered series for all eight origins instead would move the percentiles below by at most 0.007.
+
+\textbf{Results.} Weekly region demand has a median of about 1{,}157 and a 10th--90th percentile range of 1{,}058--1{,}263, which is 0.933--1.113 times the point forecast of 1{,}135 (Table~\ref{tab:mc}); the mean is 1.022 times the forecast, in line with the average backtest ratio of 1.021. Individual products are far less predictable: in 90\% of simulated draws a single product-day falls between 0.40 and 1.74 times its forecast, close to the historical range (0.42--1.81).
+
+\begin{table}[h]
+\centering
+\small
+\caption{Simulated weekly demand, June 26--July 2 (normalized units; 2{,}000 paths).}
+\label{tab:mc}
+\begin{tabular}{lrrrr}
+\toprule
+ & P10 & Median & P90 & Point forecast \\
+\midrule
+Region & 1{,}058 & 1{,}157 & 1{,}263 & 1{,}135 \\
+Store 18 & 372 & 415 & 465 & 408 \\
+Store 145 & 342 & 384 & 430 & 378 \\
+Store 235 & 317 & 355 & 398 & 348 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{mc_figure.png}
+\caption{(A) Simulated weekly region demand with the three scenarios and the current supply limit. (B) Weekly actual-to-forecast ratios behind the simulation; dashed lines are the scenario multipliers.}
+\label{fig:mc}
+\end{figure}
+
+\textbf{Check of the three scenarios.} The low, typical, and high scenarios (weekly region totals 1{,}070, 1{,}186, and 1{,}334) sit at the 13th, 64th, and 98th percentiles of the simulated weeks. They lie above the simulation because their multipliers come from only two of the eight weeks (June 12--18 and June 19--25), one of which (June 19--25) was 9--24\% above forecast. The simulated 10th, 50th, and 90th percentiles give multipliers of 0.933, 1.020, and 1.113 (weekly totals 1{,}058, 1{,}157, and 1{,}263). We provide both sets: the simulated set is better supported by all eight weeks, each forecast without look-ahead, while the Section 2.3 set is a more demanding high-demand test.
+
+\textbf{Validation.} We refit the model on seven weeks and simulate the eighth. The realized region total fell inside the central 80\% interval in 7 of 8 weeks and the store-week totals in 22 of 24 (about 6.4 and 19.2 expected). The only misses are in the high week of June 19--25 (the region total and stores 18 and 145).
+
+\textbf{Check against the holdout week.} The recovered demand for June 26--July 2 (609 store--product--day values) is 1{,}107 in total, 0.975 times the point forecast of 1{,}135 and at the 27th percentile of the simulated weeks (simulated 10th--90th percentile range 1{,}058--1{,}263). Store totals fall at the 18th, 26th, and 58th percentiles (stores 18, 145, 235), all inside the central 80\% interval. The realized ratio lies between the low and typical multipliers of both scenario sets (0.943 and 1.045; 0.933 and 1.020); the typical multiplier of 1.045 would have overstated demand by about 7\%. At the store--product--day level, 79.1\% of values fall inside the simulated 10th--90th percentile band (80\% expected) and 89\% inside the 5th--95th band (90\% expected). Daily totals show a weekday-pattern miss: Saturday (June 29) came in 14\% below forecast, at the 3rd percentile of the simulation, and Sunday 13\% above. With the +25\% recovery adjustment the weekly total is 1{,}155 (ratio 1.018, 49th percentile), so the conclusions do not depend on that choice. This is one week, so it supports the simulated range but does not by itself calibrate it.
+
+\textbf{Link to the capacity limits.} The baseline regional supply limit ($R=144.43$ per day) was calibrated on observed sales, which understate demand. Weekly demand exceeds seven days of that supply (1{,}011) in 97\% of simulated weeks, so if $R$ caps weekly new supply, on average at least 13\% of regional demand cannot be met under any plan, and regional demand exceeds $R$ on 6.2 of 7 days. If $R$ is recalibrated to the 90th percentile of recovered regional demand (170.06), 34\% of paths exceed $7R$, the average unmet share falls to 1.7\%, and demand exceeds $R$ on 2.6 of 7 days, so $R$ restricts the plan on some days rather than on nearly all of them.
+
+\textbf{Limits.} The model rests on eight weeks, and a single extreme week (June 19--25) influences $\sigma_f$ and $\mu$. Estimation error in the recovered demand of Section 2.2 is not modeled. Product-day noise is independent given the store-day factor. Measured by the standard deviation of actual-to-forecast ratios, simulated store-day totals are about 15\% more variable and product-days about 11\% less variable than in the backtest. The simulation assumes that next week's forecast errors resemble those of the past eight weeks, so a holiday or promotion shift would not be captured.

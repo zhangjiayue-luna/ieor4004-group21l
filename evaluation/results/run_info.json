@@ -1,0 +1,30 @@
+{
+  "kappa": {
+    "low": 0.9425454947229747,
+    "typical": 1.045028097949043,
+    "high": 1.175381857639559
+  },
+  "pi": {
+    "high": 0.3,
+    "low": 0.3,
+    "typical": 0.4
+  },
+  "base": {
+    "K": 20,
+    "C": {
+      "18": 51.25,
+      "145": 46.93,
+      "235": 46.41
+    },
+    "R": 144.43,
+    "alpha": 5.0,
+    "beta": 1.0,
+    "h": 0.2,
+    "tau": 0.5
+  },
+  "holdout_total": 1106.7503059372955,
+  "holdout_plus25_total": 1155.1453824216194,
+  "holdout_observed_sales": 913.17,
+  "raw_point_forecast_total": 988.24,
+  "rec_point_forecast_total": 1134.8536209536305
+}
