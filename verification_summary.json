@@ -1,0 +1,21 @@
+{
+  "mc_scoring_paths": 1990,
+  "diagnostic_paths_reserved": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "policy_count": 9,
+  "archived_mc_results_reproduced": true,
+  "max_per_metric_allowed_error": 1e-07,
+  "ten_path_B_rec_mean_loss": 1247.8298965833872,
+  "ten_path_solver_lower_bound": 1454.6469555898857,
+  "simulation_generation_source_supplied": false
+}

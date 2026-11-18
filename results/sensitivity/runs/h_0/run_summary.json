@@ -1,0 +1,55 @@
+{
+  "case_id": "h_0",
+  "group": "h",
+  "parameter": "h",
+  "value": 0.0,
+  "overrides": {
+    "h": 0.0
+  },
+  "demand_scale": 1.0,
+  "status": "FEASIBLE_INCUMBENT_NOT_PROVEN_OPTIMAL",
+  "gurobi_status_code": 9,
+  "objective": 1222.6208608074514,
+  "best_bound": 1199.9269399263617,
+  "mip_gap": 0.018561699385778584,
+  "runtime_seconds": 60.006033182144165,
+  "wall_seconds": 60.102052211761475,
+  "warm_start_objective": 1222.7584378403867,
+  "solver": {
+    "TimeLimit": 60,
+    "MIPGap": 0.001,
+    "Seed": 21,
+    "Threads": 4
+  },
+  "model_settings": {
+    "K": 20,
+    "capacity_by_store": {
+      "18": 51.25,
+      "145": 46.93,
+      "235": 46.41
+    },
+    "regional_supply": 144.43,
+    "capacity_scale": 1.0,
+    "supply_scale": 1.0,
+    "alpha": 5.0,
+    "beta": 1.0,
+    "h": 0.0,
+    "tau": 0.5
+  },
+  "scenario_weights": {
+    "low": 0.3,
+    "typical": 0.4,
+    "high": 0.3
+  },
+  "checks": {
+    "max_constraint_violation": 9.414691248821327e-13,
+    "max_bound_violation": 0.0,
+    "max_integrality_violation": 0.0,
+    "max_independent_inventory_error": 7.531752999057062e-13,
+    "max_capacity_violation": 2.4158453015843406e-13,
+    "max_supply_violation": 0.0,
+    "max_assortment_violation": 0,
+    "max_delivery_selection_violation": 0,
+    "objective_reconciliation_error": 2.2737367544323206e-13
+  }
+}

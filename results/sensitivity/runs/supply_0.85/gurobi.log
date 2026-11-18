@@ -1,0 +1,68 @@
+
+Gurobi 13.0.3 (mac64[arm]) logging started Mon Nov 16 23:35:24 2026
+
+Set parameter OutputFlag to value 1
+Set parameter TimeLimit to value 60
+Set parameter MIPGap to value 0.001
+Set parameter Seed to value 21
+Set parameter Threads to value 4
+Gurobi Optimizer version 13.0.3 build v13.0.3rc0 (mac64[arm] - Darwin 23.3.0 23D60)
+
+CPU model: Apple M1 Pro
+Thread count: 8 physical cores, 8 logical processors, using up to 4 threads
+
+Non-default parameters:
+TimeLimit  60
+MIPGap  0.001
+LogToConsole  0
+Seed  21
+Threads  4
+
+Optimize a model with 26260 rows, 18966 columns and 61944 nonzeros (Min)
+Model fingerprint: 0x2c76d674
+Model has 5481 linear objective coefficients
+Variable types: 15225 continuous, 3741 integer (3741 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 5e+01]
+  Objective range  [6e-02, 2e+00]
+  Bounds range     [4e-01, 5e+01]
+  RHS range        [4e-01, 1e+02]
+
+Loaded user MIP start 0 with objective 5977.21
+Loaded user MIP start 1 with objective 1693.18
+
+Presolve removed 13839 rows and 9918 columns
+Presolve time: 0.08s
+Presolved: 12421 rows, 9048 columns, 41218 nonzeros
+Variable types: 5568 continuous, 3480 integer (3480 binary)
+
+Root relaxation: objective 1.680422e+03, 9048 iterations, 0.16 seconds (0.19 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 1680.42163    0   16 1693.17918 1680.42163  0.75%     -    0s
+H    0     0                    1693.0346107 1680.42163  0.74%     -    0s
+H    0     0                    1691.9724077 1680.42163  0.68%     -    0s
+     0     0 1680.42163    0   18 1691.97241 1680.42163  0.68%     -    0s
+     0     0 1680.42163    0   15 1691.97241 1680.42163  0.68%     -    0s
+     0     0 1680.42163    0   13 1691.97241 1680.42163  0.68%     -    0s
+     0     0 1680.42163    0   13 1691.97241 1680.42163  0.68%     -    0s
+H    0     0                    1691.6862689 1680.42163  0.67%     -    0s
+     0     0 1680.42163    0   14 1691.68627 1680.42163  0.67%     -    0s
+H    0     0                    1680.4742741 1680.42163  0.00%     -    0s
+
+Cutting planes:
+  Learned: 61
+  Implied bound: 1279
+  MIR: 19
+  Flow cover: 405
+  Relax-and-lift: 168
+
+Explored 1 nodes (10083 simplex iterations) in 0.59 seconds (0.69 work units)
+Thread count was 4 (of 8 available processors)
+
+Solution count 5: 1680.47 1691.69 1691.97 ... 5977.21
+
+Optimal solution found (tolerance 1.00e-03)
+Best objective 1.680474274091e+03, best bound 1.680421629030e+03, gap 0.0031%
