@@ -1,0 +1,13 @@
+scenario,component,loss,probability,weighted_loss
+low,unmet_demand,1300.334260191365,0.3,390.1002780574095
+low,expired_stock,9.333412299601402,0.3,2.8000236898804207
+low,overnight_carryover,7.89926748198501,0.3,2.369780244595503
+low,terminal_new_stock,4.584497411409398,0.3,1.3753492234228193
+typical,unmet_demand,2295.8972037223593,0.4,918.3588814889438
+typical,expired_stock,1.7559481196617537,0.4,0.7023792478647015
+typical,overnight_carryover,6.255872486450038,0.4,2.5023489945800153
+typical,terminal_new_stock,0.0,0.4,0.0
+high,unmet_demand,3757.6620844227546,0.3,1127.2986253268264
+high,expired_stock,0.0,0.3,0.0
+high,overnight_carryover,5.528520387674159,0.3,1.6585561163022475
+high,terminal_new_stock,0.0,0.3,0.0
